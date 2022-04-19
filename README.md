@@ -1,6 +1,5 @@
-# 泰山職訓前端班時鐘作業
-發揮創意美化你上課完成的時鐘，並試著加入更多功能  
+Home Page
 
-## 注意
-請盡量使用上課教的 GUI 工具或 git 指令繳交作業  
-若使用 GitHub 網頁進行 commit 會依次數扣分
+[點我開啟檔案]()
+
+<!--  [點我開啟檔案](https://rawcdn.githack.com/[帳號]/[repository]/master/[index.html]) -->
