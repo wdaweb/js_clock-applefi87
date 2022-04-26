@@ -7,78 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        html,
         body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-        }
-
-        #sky {
-            position: absolute;
-            width: 100%;
-            height: 50%;
-            overflow: hidden;
-        }
-
-        #skyin {
-            /* transform: translate(-50%, -50%) rotate(45deg);
-            transform-origin: center 50%; */
-            position: absolute;
-            background: url('https://www.hapskorea.com/wp-content/uploads/2018/10/star.jpg');
-            width: 350%;
-            height: 350%;
-            top: 50%;
-            left: 50%;
-            /* transform-origin: 50% 50%; */
-            transform: translate(-50%, -35%) rotate(-50deg);
-           
-        }
-
-        #sun {
-            width: 60px;
-            height: 60px;
-            transform: translate(-50%, -550%) rotate(45deg);
-            transform-origin: center 550%;
-            background: radial-gradient(rgb(255, 255, 255) 20%, rgb(240, 213, 125) 60%, rgba(255, 249, 233, 0.884) 100%);
-            /* background: radial-gradient(rgb(207, 214, 221) 20%, rgb(187, 205, 218) 50%, rgb(183, 185, 187) 80%, rgb(149, 153, 153) 100%); */
-            border-radius: 50%;
-        }
-
-        #ground {
-            width: 100%;
-            height: 50%;
-            position: absolute;
-            bottom: 0;
-            margin: 0;
-            background: linear-gradient(0deg, rgb(0, 0, 0) 0%, rgb(110, 72, 41) 90%);
-        }
-
-
-        p {
-            color: #000;
-            margin: 0;
-            /* color:rgb(191,192,192) */
+            background: rgb(126, 188, 218);
         }
 
         .title>p {
             font-size: 50px;
             width: 500px;
             text-align: center;
+            margin: 10px;
         }
 
         #body {
-            background: rgb(255, 255, 255);
-            /* background:rgb(27,28,28); */
+            background: white;
             width: 500px;
             height: 500px;
-            border: 10px solid rgb(0, 0, 0);
-            /* border: 10px solid rgb(191,192,192); */
+            border: 10px solid black;
+            margin: 0 auto;
+            padding: 0;
             border-radius: 50%;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             visibility: hidden;
         }
 
@@ -88,7 +36,6 @@
             top: 50%;
             /* 要自行transformX -50% */
             background-color: black;
-            /* background-color: rgb(191,192,192); */
         }
 
         #hour {
@@ -140,8 +87,6 @@
             background-color: rgba(255, 255, 255, 0);
             transform: translate(-50%, -350%) rotate(0deg);
             transform-origin: center 350%;
-            color: #000;
-            /* color:rgb(191,192,192) */
         }
 
         .num>div {
@@ -156,19 +101,22 @@
             border-radius: 50%;
             transform: translate(-50%, -50%);
         }
+
+        #sun {
+            width: 60px;
+            height: 60px;
+            transform: translate(-50%, -550%) rotate(45deg);
+            transform-origin: center 550%;
+            background: radial-gradient(rgba(255, 255, 255) 20%, rgba(255, 241, 118, 0.8) 50%, rgba(240, 234, 185, 0.589) 80%, rgba(239, 255, 8, 0.37) 100%);
+            border-radius: 50%;
+        }
     </style>
 
 </head>
 
 <body>
-    <div id="sky"><div id="skyin"></div></div>
     <div class="title">
         <p>仿真時鐘</p>
-        <div id="sun" class="cc"> </div>
-        <div id="ground"></div>
-        <button onclick="now()">現在時間</button>
-        <button onclick="shadow()">查看陰影</button>
-        <button onclick="dayNight()">查看早晚</button>
     </div>
     <div id="body">
         <div class="num cc">
@@ -180,12 +128,12 @@
         <div class="d0 dot cc"></div>
         <div class="d1 dot cc"></div>
         <div class="cc center"></div>
-
+        <div id="sun" class="cc"> </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         // 基本版面--------------------------------
         // 建立一圈數字
+        const tx = document.getElementsByClassName('num')[0];
         for (let i = 1; i < 12; i += 1) {
             let dg = 30 * i;
             let outNum = document.createElement('div')
@@ -195,54 +143,37 @@
             outNum.insertAdjacentElement('beforeEnd', inNum);
             outNum.style.transform = `translate(-50%, -350%) rotate(${dg}deg)`;
             outNum.classList.add('num', 'cc');
-            $(outNum).insertAfter('.num')
+            tx.insertAdjacentElement('afterEnd', outNum)
         }
 
         //建立一圈刻度(包含粗細) 
-        // let dot = document.querySelectorAll('.dot');
+        let dot = document.querySelectorAll('.dot');
 
-        // const createCircle = (e, ar, n) => {
-        //     for (let i = n; i < 360; i += n) {
-        //         let newE = document.createElement('div')
-        //         newE.style.transform = 'translate(-50%, -1700%) rotate(' + i + 'deg)';
-        //         newE.classList.add('d' + ar, 'dot', 'cc');
-        //         e.insertAdjacentElement('afterEnd', newE);
-        //     }
-        // }
-        // for (let d in dot) {
-        //     createCircle(dot[d], d, (d * 4 + 1) * 6)
-        // }
-// 
-const createCircle = (e, ar, n) => {
+        const createCircle = (e, ar, n) => {
             for (let i = n; i < 360; i += n) {
-                let newE = $('<div ></div>').insertAfter(e)
-                newE.css('transform','translate(-50%, -1700%) rotate(' + i + 'deg)')
-                newE.addClass(`${'d'+ar} dot cc`)
+                let newE = document.createElement('div')
+                newE.style.transform = 'translate(-50%, -1700%) rotate(' + i + 'deg)';
+                newE.classList.add('d' + ar, 'dot', 'cc');
+                e.insertAdjacentElement('afterEnd', newE);
             }
         }
-        let dot = $('.dot')
-        dot.each(function(i){
-            createCircle($(this), i, (i * 4 + 1) * 6)
-        })
+        for (let d in dot) {
+            createCircle(dot[d], d, (d * 4 + 1) * 6)
+        }
 
         // 變動功能-----------------------------------
         // 建立指針移動功能
         const pointers = document.querySelectorAll('.pointer');
         const body = document.getElementById('body')
-        const bBody = document.querySelector('body')
+
         // 先跑一次躲setInterval的等待時間
-        let bright = 1;
-        let change = 1;
         timeMove();
         document.getElementById("body").style.visibility = "visible";
-        setInterval(timeMove, 100)
+        setInterval(timeMove, 1000)
 
-        function timeMove() {
-            let now = +new Date();
-            // 去除年月 只把其他時間乘倍速
-            now = (now % 10000000) * 100;
-            now = new Date(now)
-            // now = new Date(2020, 2, 11, 18, 0, 0);
+        function timeMove(){
+            let now = new Date();
+            now = new Date(2020, 2, 11, 18, 0, 0);
             let second = now.getSeconds();
             let minute = now.getMinutes();
             let hour = now.getHours();
@@ -256,25 +187,17 @@ const createCircle = (e, ar, n) => {
             let sun = document.querySelector('#sun')
             sun.style.transform = `translate(-50%,-550%) rotate(${sunDeg}deg)`
             // 晚上設成0 陰影消失 背景轉換
-
-            if (hour < 6 || hour > 17) {
+            let bright = 1;
+            let change = 1;
+            if (hour < 5 || hour > 17) {
                 bright = 0
             } else {
                 bright = 1
             }
-            console.log("out:" + bright + "-" + change);
             if (bright != change) {
-                change = bright;
-                console.log("update:" + bright + "-" + change);
+                change == bright;
                 // 確認需要變動 再抓元素做晚上的調整
-                if (bright == 0) {
-                    bBody.style.background = 'linear-gradient(0deg,rgb(110, 72, 41) 0%,rgb(0, 0, 0)  26%,rgb(0, 0, 0)  46%,rgba(255, 246, 238,0) 46%,rgba(201, 247, 255,0) 90%) ';
-                    const br = setInterval(function(){
-                        $('#skyin').css({ opacity: 0.8})
-                    },1000)
-                } else {
-                    bBody.style.background = 'linear-gradient(0deg,rgb(110, 72, 41) 0%,rgb(0, 0, 0)  46%,rgb(255, 246, 238) 46%,rgb(201, 247, 255) 90%)'
-                }
+
             }
             let transformRatio = [80, 85, 72];
             let shadowRatio = [0.8, 1.8, 3];
@@ -293,7 +216,7 @@ const createCircle = (e, ar, n) => {
             // 時鐘陰影(配合太陽轉動)
             body.style.boxShadow = ` ${ratio * Math.sin((Math.PI / 180) * (0 - sunDeg))}px ${ratio * Math.cos((Math.PI / 180) * (0 - sunDeg))}px ${2}px rgba(0,0,0,0.5) ,${ratio * 2 * Math.sin((Math.PI / 180) * (0 - sunDeg))}px ${ratio * 2 * Math.cos((Math.PI / 180) * (0 - sunDeg))}px ${3}px rgba(0,0,0,0.7)`
         }
-
+      
     </script>
 </body>
 

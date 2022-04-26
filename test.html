@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #addul3{
+            height:200px;
+            background:#888;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="addul3">add</div>
+    <div>
+        <ul>1</ul>
+        <ul>2</ul>
+        <ul id="ul3">3</ul>
+        <ul>4</ul>
+        <ul>5</ul>
+    </div>
+    <script>$("#addul3").on("click", function () {
+            $("#ul3").prepend("<li>前面新的</li>");
+            $("#ul3").append("<li>後面新的</li>");
+            $('<p>前面</p>').insertBefore('#ul3')
+            $('<p>後面</p>').insertAfter('#ul3')
+        })</script>
+</body>
+
+</html>
