@@ -21,7 +21,7 @@
             height: 50%;
             overflow: hidden;
             transition: all 5s;
-            opacity: 1;
+            opacity: 0;
         }
 
         #skyin {
@@ -112,14 +112,11 @@
             border-radius: 10%;
             background: red;
             box-shadow: 0 50px 10px black;
-            /* box-shadow: 50px 0px 10px black;   
-            box-shadow: (50*cos(45))px 50*cos(45)px 10px black; 45 */
         }
 
         .pointer {
             transform-origin: center 85%;
             border-radius: 40% 40% 3px 3px;
-            /* transition: 1s linear ; */
         }
 
         .dot {
@@ -144,7 +141,7 @@
             transform: translate(-50%, -350%) rotate(0deg);
             transform-origin: center 350%;
             color: #000;
-            /* color:rgb(191,192,192) */
+
         }
 
         .num>div {
@@ -195,14 +192,13 @@
         // 建立一圈數字
         for (let i = 1; i < 12; i += 1) {
             let dg = 30 * i;
-            let outNum = document.createElement('div')
-            let inNum = document.createElement('div')
-            inNum.style.transform = `rotate(-${dg}deg)`
-            inNum.innerText = i
-            outNum.insertAdjacentElement('beforeEnd', inNum);
-            outNum.style.transform = `translate(-50%, -350%) rotate(${dg}deg)`;
-            outNum.classList.add('num', 'cc');
-            $(outNum).insertAfter('.num')
+            // let outNum = document.createElement('div')
+            let outNum = $('<div></div>').insertAfter($('.num').eq($('.num').length-1))
+            let inNum = $(`<div>${i}</div>`)
+            outNum.append(inNum)
+            inNum.css('transform',`rotate(-${dg}deg)`)
+            outNum.css('transform',`translate(-50%, -350%) rotate(${dg}deg)`)
+            outNum.addClass('num cc');
         }
 
         const createCircle = (e, ar, n) => {
@@ -212,24 +208,23 @@
                 newE.addClass(`${'d' + ar} dot cc`)
             }
         }
-        let dot = $('.dot')
-        dot.each(function (i) {
+        $('.dot').each(function (i) {
             createCircle($(this), i, (i * 4 + 1) * 6)
         })
 
         // 變動功能-----------------------------------
         // 建立指針移動功能
         const pointers = document.querySelectorAll('.pointer');
-        const bBody = document.querySelector('body')
         // 先跑一次躲setInterval的等待時間
         let bright = 1;
         let change = 1;
+        // 加速幾倍
+        let speed = 3600;
         timeMove();
         $('#body').css('visibility','visible')
         setInterval(timeMove, 100)
-
+        
         function timeMove() {
-            let speed = 3600;
             let now = +new Date();
             // 去除年月 只顯示時間*倍速
             now = (now % 10000000) * speed;
@@ -246,9 +241,8 @@
             // 太陽在幾度?
             let sunDeg = hDeg / 2 + 180;
             // 太陽轉動
-            let sun = document.querySelector('#sun')
-            sun.style.transform = `translate(-50%,-550%) rotate(${sunDeg}deg)`
-
+            $('#sun').css('transform',`translate(-50%,-550%) rotate(${sunDeg}deg)`)
+            
             // 晚上設成0 陰影消失 背景轉換
            hour < 6 || hour > 17?bright = 0:bright = 1
             if (bright != change) {
@@ -257,6 +251,8 @@
                 // 確認需要變動 再調整透明度
                 bright==0? $('#sky').css('opacity', 1): $('#sky').css('opacity', 0)
             }
+            //陰影轉動
+            $('#skyin').css('transform',`translate(-50%, -40%) rotate(${sunDeg}deg)`)
 
             // 指針陰影變數
             let transformRatio = [80, 85, 72];
