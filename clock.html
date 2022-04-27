@@ -12,8 +12,7 @@
             height: 100%;
             width: 100%;
             margin: 0;
-            background: linear-gradient(0deg, rgb(110, 72, 41) 0%, rgb(0, 0, 0) 46%, rgb(255, 246, 238) 46%, rgb(201, 247, 255) 90%);
-
+            background: linear-gradient(0deg, rgb(18, 153, 0) 0%, rgb(0, 0, 0) 46%, rgb(255, 246, 238) 46%, rgb(123, 214, 230) 60%);
         }
 
         #sky {
@@ -21,7 +20,6 @@
             width: 100%;
             height: 50%;
             overflow: hidden;
-            transition: all 5s;
             opacity: 0;
         }
 
@@ -36,7 +34,6 @@
             left: 50%;
             /* transform-origin: 50% 50%; */
             transform: translate(-50%, -40%) rotate(-50deg);
-
         }
 
         #sun {
@@ -44,8 +41,8 @@
             height: 60px;
             transform: translate(-50%, -550%) rotate(45deg);
             transform-origin: center 550%;
-            background: radial-gradient(rgb(255, 255, 255) 20%, rgb(240, 213, 125) 60%, rgba(255, 249, 233, 0.884) 100%);
             border-radius: 50%;
+            /* background: radial-gradient(rgb(255, 255, 255) 20%, rgb(240, 213, 125) 60%, rgba(255, 249, 233, 0.884) 100%); */
         }
 
         #ground {
@@ -54,7 +51,6 @@
             position: absolute;
             bottom: 0;
             margin: 0;
-            background: linear-gradient(0deg, rgb(0, 0, 0) 0%, rgb(110, 72, 41) 90%);
         }
 
         .title {
@@ -74,12 +70,8 @@
         }
 
         #body {
-            background: rgb(255, 255, 255);
-            /* background:rgb(27,28,28); */
             width: 500px;
             height: 500px;
-            border: 10px solid rgb(0, 0, 0);
-            /* border: 10px solid rgb(191,192,192); */
             border-radius: 50%;
             position: absolute;
             left: 50%;
@@ -93,8 +85,6 @@
             left: 50%;
             top: 50%;
             /* 要自行transformX -50% */
-            background-color: black;
-            /* background-color: rgb(191,192,192); */
         }
 
         #hour {
@@ -143,8 +133,6 @@
             background-color: rgba(255, 255, 255, 0);
             transform: translate(-50%, -350%) rotate(0deg);
             transform-origin: center 350%;
-            color: #000;
-
         }
 
         .num>div {
@@ -183,10 +171,10 @@
         </div>
         <div id="hour" class="cc pointer"></div>
         <div id="minute" class="cc pointer"></div>
-        <div id="second" class="cc pointer"></div>
+        <div id="second" class="cc pointer second"></div>
         <div class="d0 dot cc"></div>
         <div class="d1 dot cc"></div>
-        <div class="cc center"></div>
+        <div class="cc center second"></div>
 
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
@@ -229,37 +217,82 @@
         // 加速幾倍
         let speed = 3600;
         $('#sky').css('transition', `all ${10000 / speed}s`)
-        $('#sky').css('transition', `none`)
+
         // 給模式2 強制到某個時間
         let brightTime = 0
         // 預設漸變速度
         $('#sky').css('transition', `all ${10000 / speed}s`)
 
+        let time
         // 不同模式下都會切換轉速
         $('select').on('change', function () {
+            console.log('1change');
             switch ($(this).val()) {
                 case '1':
                     speed = 1
                     brightTime = 0
-                    $('#sky').css('transition', `all ${1 / speed}s`)
+                    $('#sky').css('transition', `none`)
+                    console.log('2setnone');
+                    changeSky()
+                    setTimeout(() => {
+                        $('#sky').css('transition', `all ${1 / speed}s`)
+                    }, 50)
+
                     break
                 case '2':
                     speed = 350
                     brightTime = +new Date() - 77000000
-                    $('#sky').css('transition', `all ${8000 / speed}s`)
+                    $('#sky').css('transition', `none`)
+                    changeSky()
+                    setTimeout(() => {
+                        $('#sky').css('transition', `all ${8000 / speed}s`)
+                    }, 50)
                     break
                 case '3':
                     speed = 3600
                     brightTime = 0
-                    $('#sky').css('transition', `all ${10000 / speed}s`)
+                    $('#sky').css('transition', `none`)
+                    changeSky()
+                    setTimeout(() => {
+                        $('#sky').css('transition', `all ${10000 / speed}s`)
+                    }, 50)
                     break
             }
         })
 
+        function day() {
+            $('#sky').css('opacity', 0)
+            $('#ground').css({ background: 'linear-gradient(0deg, black 0%, rgb(7, 163, 28) 90%)' })
+            $('#body').css({ border: '10px solid black',background: 'white'})
+            $('.cc').css({ background: 'black' })
+            $('.second').css({ background: 'red' })
+            $('.num').css({color: 'black',background: 'rgba(0,0,0,0)'})
+            $('#sun').css({background: 'radial-gradient(rgb(255, 255, 255) 20%, rgb(240, 213, 125) 60%, rgba(255, 249, 233, 0.884) 100%)'})
+        }
+        function night() {
+            $('#sky').css('opacity', 1)
+            $('#ground').css({ background: 'linear-gradient(0deg, black 0%, rgb(7, 163, 28) 90%)' })
+            $('#ground').css({ background: 'linear-gradient(0deg,rgb(1,10 , 0) 0%, rgb(6, 39, 4) 90%)' })
+            $('#body').css({ border: '10px solid rgb(185, 255, 247)',background: 'rgb(70, 65, 65)'})
+            $('.cc').css({ background: 'rgb(185, 255, 247)' })
+            $('.num').css({color: 'rgb(185, 255, 247)',background: 'rgba(0,0,0,0)' })
+           
+        }
+        function changeSky() {
+            // 晚上設成0 陰影消失 背景轉換
+            time < 5.6 || time > 17.5 ? bright = 0 : bright = 1
+            if (bright != change) {
+                console.log('3changeO');
+                change = bright;
+                // 確認需要變動 再調整透明度
+                bright == 0 ?night():day()
+            }
+        }
+        day()
         // 先跑一次躲setInterval的等待時間
         timeMove();
         $('#body').css('visibility', 'visible')
-        setInterval(timeMove, 100)
+        setInterval(timeMove, 30)
         // 當更改按鈕，記錄當下值當基準(算時間差用)
 
 
@@ -276,22 +309,12 @@
             let mDeg = minute * 6 + sDeg / 60;
             let hDeg = hour * 30 + mDeg / 12;
             let deg = [hDeg, mDeg, sDeg];
-
+            time = hour + minute / 60
             // 太陽在幾度?
             let sunDeg = hDeg / 2 + 180;
             // 太陽轉動
             $('#sun').css('transform', `translate(-50%,-550%) rotate(${sunDeg}deg)`)
-console.log(hour+minute/60);
-            // 晚上設成0 陰影消失 背景轉換
-            hour+minute/60 < 5.3|| hour+minute/60 > 17.5 ? bright = 0 : bright = 1
-            if (bright != change) {
-                change = bright;
-                // 確認需要變動 再調整透明度
-                bright == 0 ?
-                    ($('#sky').css('opacity', 1)
-                        , console.log("NIGHT"))
-                    : ($('#sky').css('opacity', 0), console.log("DAY"))
-            }
+            changeSky()
             //陰影轉動
             $('#skyin').css('transform', `translate(-50%, -40%) rotate(${sunDeg}deg)`)
 
