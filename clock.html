@@ -12,9 +12,10 @@
             height: 100%;
             width: 100%;
             margin: 0;
-            background :linear-gradient(0deg,rgb(110, 72, 41) 0%,rgb(0, 0, 0)  46%,rgb(255, 246, 238) 46%,rgb(201, 247, 255) 90%);
+            background: linear-gradient(0deg, rgb(110, 72, 41) 0%, rgb(0, 0, 0) 46%, rgb(255, 246, 238) 46%, rgb(201, 247, 255) 90%);
 
         }
+
         #sky {
             position: absolute;
             width: 100%;
@@ -44,7 +45,6 @@
             transform: translate(-50%, -550%) rotate(45deg);
             transform-origin: center 550%;
             background: radial-gradient(rgb(255, 255, 255) 20%, rgb(240, 213, 125) 60%, rgba(255, 249, 233, 0.884) 100%);
-            /* background: radial-gradient(rgb(207, 214, 221) 20%, rgb(187, 205, 218) 50%, rgb(183, 185, 187) 80%, rgb(149, 153, 153) 100%); */
             border-radius: 50%;
         }
 
@@ -57,20 +57,20 @@
             background: linear-gradient(0deg, rgb(0, 0, 0) 0%, rgb(110, 72, 41) 90%);
         }
 
-
-        p {
-            color: #000;
-            margin: 0;
-            /* color:rgb(191,192,192) */
-        }
-
-        .title{
-            position:relative;
+        .title {
+            position: relative;
             font-size: 50px;
             width: 300px;
             text-align: center;
-            background: white;
-            margin:auto;
+            margin: auto;
+            line-height: 0px;
+        }
+
+        .title p {
+            line-height: 50px;
+            text-shadow: 1px 1px 5px black;
+            color: white;
+            margin: 0;
         }
 
         #body {
@@ -169,11 +169,11 @@
     </div>
     <div class="title">
         <p>仿真時鐘</p>
-       
-   
-        <button onclick="now()">現在時間</button>
-        <button onclick="shadow()">加速看白天影子</button>
-        <button onclick="dayNight()">看早晚變化</button>
+        <select name="typw">
+            <option value="1">現在時間</option>
+            <option value="2">看影子變化</option>
+            <option value="3" selected>看早晚變化</option>
+        </select>
     </div>
     <div id="sun" class="cc"> </div>
     <div id="ground"></div>
@@ -199,11 +199,11 @@
         for (let i = 1; i < 12; i += 1) {
             let dg = 30 * i;
             // let outNum = document.createElement('div')
-            let outNum = $('<div></div>').insertAfter($('.num').eq($('.num').length-1))
+            let outNum = $('<div></div>').insertAfter($('.num').eq($('.num').length - 1))
             let inNum = $(`<div>${i}</div>`)
             outNum.append(inNum)
-            inNum.css('transform',`rotate(-${dg}deg)`)
-            outNum.css('transform',`translate(-50%, -350%) rotate(${dg}deg)`)
+            inNum.css('transform', `rotate(-${dg}deg)`)
+            outNum.css('transform', `translate(-50%, -350%) rotate(${dg}deg)`)
             outNum.addClass('num cc');
         }
 
@@ -221,30 +221,54 @@
         // 變動功能-----------------------------------
         // 建立指針移動功能
         const pointers = document.querySelectorAll('.pointer');
-        // 先跑一次躲setInterval的等待時間
+        // 偵測晝夜轉換
         let bright = 1;
         let change = 1;
+
+        // 不同模式效果
         // 加速幾倍
         let speed = 3600;
-        // 設定2個按鈕(看影子在設定時間上方)
-        function now(){speed=1}
-        function dayNight(){speed=3600}
-        let brightday =false
-        timeMove();
-        $('#body').css('visibility','visible')
-        setInterval(timeMove, 100)
+        $('#sky').css('transition', `all ${10000 / speed}s`)
+        $('#sky').css('transition', `none`)
+        // 給模式2 強制到某個時間
+        let brightTime = 0
+        // 預設漸變速度
+        $('#sky').css('transition', `all ${10000 / speed}s`)
 
-        function shadow(){
-                speed=1000
-                brightday = (+new Date())% 1000000
+        // 不同模式下都會切換轉速
+        $('select').on('change', function () {
+            switch ($(this).val()) {
+                case '1':
+                    speed = 1
+                    brightTime = 0
+                    $('#sky').css('transition', `all ${1 / speed}s`)
+                    break
+                case '2':
+                    speed = 350
+                    brightTime = +new Date() - 77000000
+                    $('#sky').css('transition', `all ${8000 / speed}s`)
+                    break
+                case '3':
+                    speed = 3600
+                    brightTime = 0
+                    $('#sky').css('transition', `all ${10000 / speed}s`)
+                    break
             }
-           
+        })
+
+        // 先跑一次躲setInterval的等待時間
+        timeMove();
+        $('#body').css('visibility', 'visible')
+        setInterval(timeMove, 100)
+        // 當更改按鈕，記錄當下值當基準(算時間差用)
+
+
         function timeMove() {
-            let now = brightday || (+new Date())
+            let now = +new Date() - brightTime
             // 去除年月 只顯示時間*倍速
-            now = now-(now % 1000000)+(now % 1000000)*speed;
+            now = now - (now % 1000000) + (now % 1000000) * speed;
             now = new Date(now)
-            console.log(now);
+
             let second = now.getSeconds();
             let minute = now.getMinutes();
             let hour = now.getHours();
@@ -256,18 +280,20 @@
             // 太陽在幾度?
             let sunDeg = hDeg / 2 + 180;
             // 太陽轉動
-            $('#sun').css('transform',`translate(-50%,-550%) rotate(${sunDeg}deg)`)
-            
+            $('#sun').css('transform', `translate(-50%,-550%) rotate(${sunDeg}deg)`)
+console.log(hour+minute/60);
             // 晚上設成0 陰影消失 背景轉換
-           hour < 5 || hour > 17?bright = 0:bright = 1
+            hour+minute/60 < 5.3|| hour+minute/60 > 17.5 ? bright = 0 : bright = 1
             if (bright != change) {
                 change = bright;
-                $('#sky').css('transition',`all ${10000/speed}s`)
                 // 確認需要變動 再調整透明度
-                bright==0? $('#sky').css('opacity', 1): $('#sky').css('opacity', 0)
+                bright == 0 ?
+                    ($('#sky').css('opacity', 1)
+                        , console.log("NIGHT"))
+                    : ($('#sky').css('opacity', 0), console.log("DAY"))
             }
             //陰影轉動
-            $('#skyin').css('transform',`translate(-50%, -40%) rotate(${sunDeg}deg)`)
+            $('#skyin').css('transform', `translate(-50%, -40%) rotate(${sunDeg}deg)`)
 
             // 指針陰影變數
             let transformRatio = [80, 85, 72];
@@ -286,7 +312,7 @@
                 }
             }
             // 時鐘陰影(配合太陽轉動)
-            $('#body').css('box-shadow',` ${ratio * Math.sin((Math.PI / 180) * (0 - sunDeg))}px ${ratio * Math.cos((Math.PI / 180) * (0 - sunDeg))}px ${2}px rgba(0,0,0,0.5) ,${ratio * 2 * Math.sin((Math.PI / 180) * (0 - sunDeg))}px ${ratio * 2 * Math.cos((Math.PI / 180) * (0 - sunDeg))}px ${3}px rgba(0,0,0,0.7)`)
+            $('#body').css('box-shadow', ` ${ratio * Math.sin((Math.PI / 180) * (0 - sunDeg))}px ${ratio * Math.cos((Math.PI / 180) * (0 - sunDeg))}px ${2}px rgba(0,0,0,0.5) ,${ratio * 2 * Math.sin((Math.PI / 180) * (0 - sunDeg))}px ${ratio * 2 * Math.cos((Math.PI / 180) * (0 - sunDeg))}px ${3}px rgba(0,0,0,0.7)`)
         }
 
     </script>
