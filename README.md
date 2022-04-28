@@ -4,6 +4,8 @@
 3.指針/時鐘影子會與太陽相對位置變化
 4.漸變的深色模式+星空轉換(切換選單查看)
 
+建議可ctrl+滾輪 縮小看
+
 [點我開啟](https://rawcdn.githack.com/wdaweb/js_clock-applefi87/0b5d21cd4ab998e1477059e789f6eee5ce422710/clock.html)
 
 
