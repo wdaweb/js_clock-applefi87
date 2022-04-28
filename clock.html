@@ -51,6 +51,12 @@
             position: absolute;
             bottom: 0;
             margin: 0;
+            background: linear-gradient(0deg, rgb(33, 110, 3) 0%, rgb(4, 219, 33) 90%);
+        }
+        #ground .in{
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, rgb(4, 63, 11) 0%, rgb(61, 37, 2) 90%);
         }
 
         .title {
@@ -152,7 +158,7 @@
 </head>
 
 <body>
-    <div id="sky">
+    <div id="sky" class="slow">
         <div id="skyin"></div>
     </div>
     <div class="title">
@@ -164,16 +170,16 @@
         </select>
     </div>
     <div id="sun" class="cc"> </div>
-    <div id="ground"></div>
-    <div id="body">
+    <div id="ground" ><div class="in slow"></div></div>
+    <div id="body" class="slow">
         <div class="num cc">
-            <div>12</div>
+            <div class="slow">12</div>
         </div>
         <div id="hour" class="cc pointer"></div>
         <div id="minute" class="cc pointer"></div>
         <div id="second" class="cc pointer second"></div>
-        <div class="d0 dot cc"></div>
-        <div class="d1 dot cc"></div>
+        <div class="d0 dot cc slow"></div>
+        <div class="d1 dot cc slow"></div>
         <div class="cc center second"></div>
 
     </div>
@@ -182,7 +188,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
 
-        // 基本版面--------------------------------
+// 基本版面--------------------------------
         // 建立一圈數字
         for (let i = 1; i < 12; i += 1) {
             let dg = 30 * i;
@@ -192,91 +198,83 @@
             outNum.append(inNum)
             inNum.css('transform', `rotate(-${dg}deg)`)
             outNum.css('transform', `translate(-50%, -350%) rotate(${dg}deg)`)
-            outNum.addClass('num cc');
+            outNum.addClass('num cc slow');
         }
 
         const createCircle = (e, ar, n) => {
             for (let i = n; i < 360; i += n) {
                 let newE = $('<div ></div>').insertAfter(e)
                 newE.css('transform', 'translate(-50%, -1700%) rotate(' + i + 'deg)')
-                newE.addClass(`${'d' + ar} dot cc`)
+                newE.addClass(`${'d' + ar} dot cc slow`)
             }
         }
         $('.dot').each(function (i) {
             createCircle($(this), i, (i * 4 + 1) * 6)
         })
 
-        // 變動功能-----------------------------------
+// 變動功能-----------------------------------
         // 建立指針移動功能
         const pointers = document.querySelectorAll('.pointer');
-        // 偵測晝夜轉換
+        // 偵測晝夜轉換 預設白天
         let bright = 1;
         let change = 1;
 
         // 不同模式效果
         // 加速幾倍
-        let speed = 3600;
-        $('#sky').css('transition', `all ${10000 / speed}s`)
+        let speed = 20000;
+       // 預設漸變速度
+       
+
 
         // 給模式2 強制到某個時間
         let brightTime = 0
-        // 預設漸變速度
-        $('#sky').css('transition', `all ${10000 / speed}s`)
+     
 
         let time
         // 不同模式下都會切換轉速
+        const changeSlow =(speedIn,brightTimeIn,speedSet)=>{
+                    speed = speedIn
+                    brightTime = brightTimeIn
+                    $('.slow').css('transition', `none`)
+                    changeSky()
+                    setTimeout(() => {
+                        $('.slow').css('transition', `all ${speedSet / speed}s ease-in-out `)
+                    }, 50)
+        }
+// 偵測模式
         $('select').on('change', function () {
-            console.log('1change');
             switch ($(this).val()) {
                 case '1':
-                    speed = 1
-                    brightTime = 0
-                    $('#sky').css('transition', `none`)
-                    console.log('2setnone');
-                    changeSky()
-                    setTimeout(() => {
-                        $('#sky').css('transition', `all ${1 / speed}s`)
-                    }, 50)
-
+                changeSlow(1,0,3600)
                     break
                 case '2':
-                    speed = 350
-                    brightTime = +new Date() - 77000000
-                    $('#sky').css('transition', `none`)
-                    changeSky()
-                    setTimeout(() => {
-                        $('#sky').css('transition', `all ${8000 / speed}s`)
-                    }, 50)
+                changeSlow(350,+new Date() - 77000000,5000)
                     break
                 case '3':
-                    speed = 3600
-                    brightTime = 0
-                    $('#sky').css('transition', `none`)
-                    changeSky()
-                    setTimeout(() => {
-                        $('#sky').css('transition', `all ${10000 / speed}s`)
-                    }, 50)
+                changeSlow(3600,0,20000)
                     break
             }
         })
-
+        changeSlow(3600,0,6000)
+// 白天效果
         function day() {
             $('#sky').css('opacity', 0)
-            $('#ground').css({ background: 'linear-gradient(0deg, black 0%, rgb(7, 163, 28) 90%)' })
+            $('#ground .in').css('opacity',0)
             $('#body').css({ border: '10px solid black',background: 'white'})
             $('.cc').css({ background: 'black' })
             $('.second').css({ background: 'red' })
             $('.num').css({color: 'black',background: 'rgba(0,0,0,0)'})
             $('#sun').css({background: 'radial-gradient(rgb(255, 255, 255) 20%, rgb(240, 213, 125) 60%, rgba(255, 249, 233, 0.884) 100%)'})
         }
+// 晚上效果
         function night() {
             $('#sky').css('opacity', 1)
-            $('#ground').css({ background: 'linear-gradient(0deg, black 0%, rgb(7, 163, 28) 90%)' })
-            $('#ground').css({ background: 'linear-gradient(0deg,rgb(1,10 , 0) 0%, rgb(6, 39, 4) 90%)' })
+            $('#ground .in').css('opacity',1)
             $('#body').css({ border: '10px solid rgb(185, 255, 247)',background: 'rgb(70, 65, 65)'})
             $('.cc').css({ background: 'rgb(185, 255, 247)' })
             $('.num').css({color: 'rgb(185, 255, 247)',background: 'rgba(0,0,0,0)' })
            
+// 偵測晝夜變化
         }
         function changeSky() {
             // 晚上設成0 陰影消失 背景轉換
@@ -295,7 +293,7 @@
         setInterval(timeMove, 30)
         // 當更改按鈕，記錄當下值當基準(算時間差用)
 
-
+// 控制時間變化下動作
         function timeMove() {
             let now = +new Date() - brightTime
             // 去除年月 只顯示時間*倍速
@@ -315,9 +313,10 @@
             // 太陽轉動
             $('#sun').css('transform', `translate(-50%,-550%) rotate(${sunDeg}deg)`)
             changeSky()
-            //陰影轉動
+            //星空轉動
             $('#skyin').css('transform', `translate(-50%, -40%) rotate(${sunDeg}deg)`)
 
+// 陰影變動
             // 指針陰影變數
             let transformRatio = [80, 85, 72];
             let shadowRatio = [0.8, 1.8, 3];
@@ -337,7 +336,6 @@
             // 時鐘陰影(配合太陽轉動)
             $('#body').css('box-shadow', ` ${ratio * Math.sin((Math.PI / 180) * (0 - sunDeg))}px ${ratio * Math.cos((Math.PI / 180) * (0 - sunDeg))}px ${2}px rgba(0,0,0,0.5) ,${ratio * 2 * Math.sin((Math.PI / 180) * (0 - sunDeg))}px ${ratio * 2 * Math.cos((Math.PI / 180) * (0 - sunDeg))}px ${3}px rgba(0,0,0,0.7)`)
         }
-
     </script>
 </body>
 
