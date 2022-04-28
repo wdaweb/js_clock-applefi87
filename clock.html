@@ -13,6 +13,7 @@
             width: 100%;
             margin: 0;
             background: linear-gradient(0deg, rgb(18, 153, 0) 0%, rgb(0, 0, 0) 46%, rgb(255, 246, 238) 46%, rgb(123, 214, 230) 60%);
+            overflow: hidden;
         }
 
         #sky {
@@ -37,8 +38,9 @@
         }
 
         #sun {
-            width: 60px;
-            height: 60px;
+            /* 用vw 可以固定不被縮放影響 */
+            width: 8vw;
+            height: 8vw;
             transform: translate(-50%, -550%) rotate(45deg);
             transform-origin: center 550%;
             border-radius: 50%;
